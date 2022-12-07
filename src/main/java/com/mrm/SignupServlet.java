@@ -8,7 +8,6 @@ import com.mrm.helpers.Response;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Objects;
 
 //@WebServlet(name = "SignupServlet", value = "/SignupServlet")
@@ -36,9 +35,6 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Response res = new Response();
-        PrintWriter out = response.getWriter();
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
 
         try {
             JsonObject obj = HttpRequestHelper.getParamsFromPost(request);
@@ -66,14 +62,12 @@ public class SignupServlet extends HttpServlet {
             }
 
             response.setStatus(res.getStatusCode());
-            out.print(res.getData());
-            out.flush();
+            res.returnResponse(response, res);
 
         }catch (Exception e){
             response.setStatus(500);
             res.setMessage("an error occurred while signing up");
-            out.println(res.getData());
-            out.flush();
+            res.returnResponse(response, res);
         }
     }
 }

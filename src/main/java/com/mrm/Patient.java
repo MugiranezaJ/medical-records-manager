@@ -17,7 +17,7 @@ public class Patient extends User{
             String password = userData.get("password").toString().replace("\"", "");
 
             // check if user exists
-            if(userExists(email)){
+            if(super.userExists(email)){
                 response.setStatusCode(409);
                 response.setMessage("user already exists");
                 return response;
@@ -32,7 +32,7 @@ public class Patient extends User{
 
             // save the user
             userData.getAsJsonObject().addProperty("token", UUID.randomUUID().toString().replace("-", ""));
-            setDataStore(userData);
+            super.setDataStore(userData);
 
             response.setStatusCode(200);
             response.setMessage("user created successfully");

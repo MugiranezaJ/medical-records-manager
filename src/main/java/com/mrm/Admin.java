@@ -15,7 +15,7 @@ public class Admin extends User{
             String password = userData.get("password").toString().replace("\"", "");
 
             // check if user exists
-            if(userExists(email)){
+            if(super.userExists(email)){
                 response.setStatusCode(409);
                 response.setMessage("user already exists");
                 return response;
@@ -30,7 +30,7 @@ public class Admin extends User{
 
             // save the user
             userData.getAsJsonObject().addProperty("token", UUID.randomUUID().toString().replace("-", ""));
-            setDataStore(userData);
+            super.setDataStore(userData);
 
             response.setStatusCode(200);
             response.setMessage("user created successfully");
@@ -43,5 +43,13 @@ public class Admin extends User{
             response.setMessage("there was error creating a user");
             return response;
         }
+    }
+
+    public Response getUsers(){
+        Response response = new Response();
+        response.setData(super.dataStore.toString());
+        response.setMessage("users retrieved successfully");
+        response.setStatusCode(200);
+        return response;
     }
 }
