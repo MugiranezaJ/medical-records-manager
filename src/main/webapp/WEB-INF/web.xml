@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-<!--    <servlet>-->
-<!--        <servlet-name>Hello</servlet-name>-->
-<!--        <servlet-class>com.mrm.SignupServletvlet-->
-<!--        </servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>Hello</servlet-name>-->
-<!--        <url-pattern>/hello/*</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet>
+        <servlet-name>Users</servlet-name>
+        <servlet-class>com.mrm.UsersServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Users</servlet-name>
+        <url-pattern>/usersList</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
@@ -22,13 +22,14 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+
     <servlet>
-        <servlet-name>MyServlet</servlet-name>
+        <servlet-name>Register</servlet-name>
         <servlet-class>com.mrm.SignupServlet
         </servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>MyServlet</servlet-name>
-        <url-pattern>/my-servlet</url-pattern>
+        <servlet-name>Register</servlet-name>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
 </web-app>

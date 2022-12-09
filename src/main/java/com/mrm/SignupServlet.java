@@ -1,79 +1,82 @@
 package com.mrm;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.mrm.helpers.HttpRequestHelper;
+import com.mrm.helpers.Request;
 import com.mrm.helpers.Response;
+import com.mrm.user.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Objects;
 
-//@WebServlet(name = "SignupServlet", value = "/SignupServlet")
 public class SignupServlet extends HttpServlet {
-//    public static  String
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Hello
-//        UserServlet user = new UserServlet(1, "Jackson", 22);
-//        String userJsonString = new Gson().toJson(user);
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        PrintWriter out = response.getWriter();
-//        out.print(userJsonString);
-//        out.flush();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Response res = new Response();
-        PrintWriter out = response.getWriter();
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        JsonObject userData = Request.getParamsFromPost(request);
+        Response responseBody = new Response();
+        String email = userData.get("email").toString();
 
-        try {
-            JsonObject obj = HttpRequestHelper.getParamsFromPost(request);
-            String role = obj.get("role").toString().replace("\"", "");
+        // check if user exists
+        if(userExists(email)){
+            responseBody.setStatusCode(409);
+            responseBody.setMessage("user already exists");
+        }else {
 
-            if(Objects.equals(role, "admin")){
-                Admin admin = new Admin();
-                res = admin.signup(obj);
+            try {
 
-            }else if(Objects.equals(role, "pharmacist")){
-                Pharmacist pharmacist = new Pharmacist();
-                res = pharmacist.signup(obj);
+                String role = userData.get("role").getAsString();
 
-            }else if(Objects.equals(role, "patient")){
-                Patient patient = new Patient();
-                res = patient.signup(obj);
+                if (role.equals("admin")) {
 
-            }else if(Objects.equals(role, "physician")){
-                Physician physician = new Physician();
-                res = physician.signup(obj);
+                    Admin admin = new Admin();
+                    responseBody = admin.signup(userData);
 
-            }else{
-                res.setStatusCode(400);
-                res.setMessage("invalid role");
+                } else if (role.equals("pharmacist")) {
+
+                    Pharmacist pharmacist = new Pharmacist();
+                    responseBody = pharmacist.signup(userData);
+
+                } else if (role.equals("patient")) {
+
+                    Patient patient = new Patient();
+                    responseBody = patient.signup(userData);
+
+                } else if (role.equals("physician")) {
+
+                    Physician physician = new Physician();
+                    responseBody = physician.signup(userData);
+
+                } else {
+                    responseBody.setStatusCode(400);
+                    responseBody.setMessage("Invalid role");
+                }
+
+                // respond to the request
+                response.setStatus(responseBody.getStatusCode());
+                responseBody.returnResponse(response, responseBody);
+
+            } catch (Exception e) {
+                response.setStatus(500);
+                responseBody.setMessage("An error occurred while signing up");
+                responseBody.returnResponse(response, responseBody);
             }
-
-            response.setStatus(res.getStatusCode());
-            out.print(res.getData());
-            out.flush();
-
-        }catch (Exception e){
-            response.setStatus(500);
-            res.setMessage("an error occurred while signing up");
-            out.println(res.getData());
-            out.flush();
         }
+    }
+    public Boolean userExists(String email){
+        if(User.dataStore.get(email) != null)
+            return true;
+        return false;
     }
 }

@@ -1,37 +1,28 @@
-package com.mrm;
+package com.mrm.user;
 
 import com.google.gson.JsonObject;
 import com.mrm.helpers.Response;
 
 import java.util.UUID;
 
-public class Admin extends User{
+public class Pharmacist extends User{
     @Override
     public Response signup(JsonObject userData) {
-        System.out.println("Admin signup");
         Response response = new Response();
         try{
-            String email = userData.get("email").toString();
-            String password = userData.get("password").toString().replace("\"", "");
-
-            // check if user exists
-            if(userExists(email)){
-                response.setStatusCode(409);
-                response.setMessage("user already exists");
-                return response;
-            }
+            String password = userData.get("password").getAsString();
 
             // check length password
-            if(password.length() != 10){
+            if(password.length() != 4){
                 response.setStatusCode(400);
-                response.setMessage("password must be 10 characters long");
+                response.setMessage("password must be 4 characters long");
                 return response;
             }
 
             // save the user
-            userData.getAsJsonObject().addProperty("token", UUID.randomUUID().toString().replace("-", ""));
             setDataStore(userData);
 
+            // return response
             response.setStatusCode(200);
             response.setMessage("user created successfully");
             response.setData(userData.toString());
