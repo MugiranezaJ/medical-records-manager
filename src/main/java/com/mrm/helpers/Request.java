@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public class HttpRequestHelper {
+public class Request {
     public static JsonObject getParamsFromPost(HttpServletRequest request) throws IOException {
         StringBuilder sb = new StringBuilder();
 

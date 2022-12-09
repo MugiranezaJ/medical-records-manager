@@ -1,4 +1,4 @@
-package com.mrm;
+package com.mrm.user;
 
 import com.google.gson.JsonObject;
 import com.mrm.helpers.Response;
@@ -10,15 +10,7 @@ public class Pharmacist extends User{
     public Response signup(JsonObject userData) {
         Response response = new Response();
         try{
-            String email = userData.get("email").toString();
-            String password = userData.get("password").toString().replace("\"", "");
-
-            // check if user exists
-            if(userExists(email)){
-                response.setStatusCode(409);
-                response.setMessage("user already exists");
-                return response;
-            }
+            String password = userData.get("password").getAsString();
 
             // check length password
             if(password.length() != 4){
@@ -28,9 +20,9 @@ public class Pharmacist extends User{
             }
 
             // save the user
-            userData.getAsJsonObject().addProperty("token", UUID.randomUUID().toString().replace("-", ""));
             setDataStore(userData);
 
+            // return response
             response.setStatusCode(200);
             response.setMessage("user created successfully");
             response.setData(userData.toString());

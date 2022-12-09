@@ -10,16 +10,6 @@ public class Response {
     private String message;
     private String data;
 
-    private HttpServletResponse response;
-
-    public void Response(HttpServletResponse response){
-        this.response = response;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
     public int getStatusCode(){
         return statusCode;
     }

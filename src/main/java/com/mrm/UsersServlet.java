@@ -1,55 +1,50 @@
 package com.mrm;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.mrm.helpers.HttpRequestHelper;
 import com.mrm.helpers.Response;
+import com.mrm.user.Admin;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
 
-// TODO: work on routes
-@WebServlet(name = "UsersServlet", value = "/UsersServlet")
 public class UsersServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Response res = new Response();
-        String token = request.getHeader("authorization");
-        System.out.println(token);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        Response responseBody = new Response();
+        String token = request.getHeader("Authorization");
 
         try {
             if (token == null) {
-                res.setMessage("no token provided");
+                responseBody.setMessage("No token provided");
                 response.setStatus(401);
             } else {
                 Admin user = new Admin();
                 if (!user.isAdmin(token)) {
                     System.out.println(token);
-                    res.setMessage("you dont have permission to view users");
-                    res.setStatusCode(400);
+                    responseBody.setMessage("You dont have permission to view users");
+                    responseBody.setStatusCode(400);
                 }else {
                     Gson gson = new Gson();
                     String d = gson.toJson(Admin.dataStore);
-                    res.setData(d);
-                    res.setMessage("users retrieved successfully");
+                    responseBody.setData(d);
+                    responseBody.setMessage("Users retrieved successfully");
                     response.setStatus(200);
                 }
             }
-            res.returnResponse(response, res);
+            responseBody.returnResponse(response, responseBody);
         }catch (Exception e){
             e.printStackTrace();
-            res.setMessage("an occurred while retrieving users");
-            res.setStatusCode(500);
-            res.returnResponse(response, res);
+            responseBody.setMessage("An occurred while retrieving users");
+            responseBody.setStatusCode(500);
+            responseBody.returnResponse(response, responseBody);
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
     }
 }
