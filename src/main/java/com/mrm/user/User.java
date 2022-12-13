@@ -1,44 +1,29 @@
 package com.mrm.user;
 
-import java.util.*;
-
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.mrm.data.DataStore;
 import com.mrm.helpers.Response;
+import com.mrm.models.UserModel;
 
 public abstract class User {
 
-    public static LinkedHashMap<String,JsonObject> dataStore = new LinkedHashMap<String, JsonObject>();
-    public void setDataStore(JsonObject userData){
-        // Generate Token
-        userData.getAsJsonObject().addProperty(
-                "token",
-                UUID.randomUUID().toString().replace("-", ""));
-        dataStore.put(userData.get("email").getAsString(), userData);
-    }
-
-    public boolean isAdmin(String email){
-        JsonObject user = dataStore.get(email);
-        if(user == null ) return false;
-        if(user.get("role").toString().contains("admin"))
-            return true;
-        return false;
-    }
+    Gson gson = null;
+    Response response = null;
 
     public Response login(String email, String password) {
-        Response response = new Response();
-        if(dataStore.containsKey(email)){
-            JsonObject user = dataStore.get(email);
+        response = new Response();
+        if(DataStore.users.containsKey(email)){
+            UserModel user = DataStore.users.get(email);
+            gson = new Gson();
 
-            String storePassword = user.get("password").getAsString();
-            if(!storePassword.equals(password)){
+            if(!user.password.equals(password)){
                 response.setMessage("Invalid login credentials, try again");
                 response.setStatusCode(400);
                 return response;
             }
             response.setMessage("Logged in successfully");
             response.setStatusCode(200);
-            response.setData(user.toString());
+            response.setData(gson.toJson(user));
             return response;
         }
         response.setMessage("This user does not have an account");
@@ -46,5 +31,5 @@ public abstract class User {
         return response;
     }
 
-    public abstract Response signup(JsonObject user);
+    public abstract Response signup(UserModel user);
 }
