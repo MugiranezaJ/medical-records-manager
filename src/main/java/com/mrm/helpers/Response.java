@@ -26,15 +26,16 @@ public class Response {
         this.data = data;
     }
 
+    public String getMessage(){ return message;}
     public String getData() {
         return "{ "+ message + ", \"data\":" + data + "}";
     }
 
-    public void returnResponse(HttpServletResponse response, Response res) throws IOException {
+    public void returnResponse(HttpServletResponse response, Response responseBody) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        out.print(res.getData());
+        out.print(responseBody.getData());
         out.flush();
     }
 }

@@ -10,18 +10,21 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 public class LoginServlet extends HttpServlet {
+    Response responseBody;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        response.getWriter().append("This route is only supported for POST ")
+                .append(request.getServletPath());
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        JsonObject obj = Request.getParamsFromPost(request);
-        Response responseBody = new Response();
+        JsonObject obj = Request.getParamsFromPost(request.getReader());
+        responseBody = new Response();
 
         try {
             String email = obj.get("email").getAsString();
@@ -40,6 +43,7 @@ public class LoginServlet extends HttpServlet {
             response.setStatus(responseBody.getStatusCode());
             responseBody.returnResponse(response, responseBody);
         }catch (NullPointerException e){
+            e.printStackTrace();
             responseBody.setMessage("Both email and password are required");
             responseBody.setStatusCode(400);
             responseBody.returnResponse(response, responseBody);

@@ -1,40 +1,32 @@
 package com.mrm.user;
 
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.mrm.data.DataStore;
 import com.mrm.helpers.Response;
-
-import java.util.UUID;
+import com.mrm.models.UserModel;
 
 
 public class Patient extends User{
 
     @Override
-    public Response signup(JsonObject userData) {
-        Response response = new Response();
-        try{
-            String password = userData.get("password").getAsString();
+    public Response signup(UserModel userData) {
+        response = new Response();
+        gson = new Gson();
 
-            // check length password
-            if(password.length() != 6){
-                response.setStatusCode(400);
-                response.setMessage("password must be 6 characters long");
-                return response;
-            }
-
-            // save the user
-            setDataStore(userData);
-
-            // return response
-            response.setStatusCode(200);
-            response.setMessage("user created successfully");
-            response.setData(userData.toString());
-            return response;
-
-        }catch (Exception e){
-            e.printStackTrace();
-            response.setStatusCode(500);
-            response.setMessage("there was error creating a user");
+        // check password length patient
+        if(userData.password.length() != 6){
+            response.setStatusCode(400);
+            response.setMessage("password must be 6 characters long");
             return response;
         }
+
+        // save the user
+        DataStore.addUser(userData);
+
+        // return response
+        response.setStatusCode(200);
+        response.setMessage("user created successfully");
+        response.setData(gson.toJson(userData));
+        return response;
     }
 }
